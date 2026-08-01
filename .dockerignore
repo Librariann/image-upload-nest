@@ -1,0 +1,14 @@
+.git
+.gitignore
+README.md
+CLAUDE.md
+node_modules
+dist
+coverage
+.env
+.env.*
+.idea
+*.iml
+.vscode
+npm-debug.log*
+.DS_Store
