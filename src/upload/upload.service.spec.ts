@@ -10,6 +10,7 @@ describe('UploadService', () => {
     {
       bucket: 'test-bucket',
       growdoBucket: 'growdo-images',
+      growdoCouponBucket: 'growdo-coupons',
       region: 'ap-northeast-2',
     },
   );
@@ -52,6 +53,23 @@ describe('UploadService', () => {
     expect(result.url).toBe(
       `https://growdo-images.s3.ap-northeast-2.amazonaws.com/${input.Key}`,
     );
+  });
+
+  it('uploads a coupon privately without returning a direct S3 URL', async () => {
+    const result = await service.uploadGrowdoCoupon(
+      file(Buffer.from('coupon image'), 'coupon.png', 'image/png'),
+    );
+    const input = send.mock.calls[0][0].input;
+
+    expect(input).toMatchObject({
+      Bucket: 'growdo-coupons',
+      Body: Buffer.from('coupon image'),
+      ContentType: 'image/png',
+    });
+    expect(result).toEqual({
+      message: '파일 업로드 성공',
+      fileName: input.Key,
+    });
   });
 
   it('converts a profile image to a JPEG bounded by 200x200', async () => {

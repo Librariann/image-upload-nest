@@ -12,7 +12,7 @@ import {
   S3_SETTINGS,
   type S3Settings,
 } from '../config/aws.config';
-import type { UploadResult } from './upload.types';
+import type { PrivateUploadResult, UploadResult } from './upload.types';
 
 @Injectable()
 export class UploadService {
@@ -22,22 +22,34 @@ export class UploadService {
   ) {}
 
   async uploadImage(file: Express.Multer.File): Promise<UploadResult> {
-    return this.uploadOriginalImage(file, this.settings.bucket);
+    const fileName = await this.uploadOriginalImage(file, this.settings.bucket);
+    return this.createResult(this.settings.bucket, fileName);
   }
 
   async uploadGrowdoImage(file: Express.Multer.File): Promise<UploadResult> {
-    return this.uploadOriginalImage(file, this.settings.growdoBucket);
+    const fileName = await this.uploadOriginalImage(file, this.settings.growdoBucket);
+    return this.createResult(this.settings.growdoBucket, fileName);
+  }
+
+  async uploadGrowdoCoupon(
+    file: Express.Multer.File,
+  ): Promise<PrivateUploadResult> {
+    const fileName = await this.uploadOriginalImage(
+      file,
+      this.settings.growdoCouponBucket,
+    );
+    return { message: '파일 업로드 성공', fileName };
   }
 
   private async uploadOriginalImage(
     file: Express.Multer.File,
     bucket: string,
-  ): Promise<UploadResult> {
+  ): Promise<string> {
     const fileName = `${randomUUID()}_${file.originalname}`;
 
     try {
       await this.putObject(bucket, fileName, file.buffer, file.mimetype);
-      return this.createResult(bucket, fileName);
+      return fileName;
     } catch (error: unknown) {
       throw new HttpException(
         { error: `업로드 중 오류 발생: ${this.errorMessage(error)}` },

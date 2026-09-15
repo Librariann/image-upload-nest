@@ -7,6 +7,7 @@ export const S3_SETTINGS = Symbol('S3_SETTINGS');
 export interface S3Settings {
   bucket: string;
   growdoBucket: string;
+  growdoCouponBucket: string;
   region: string;
 }
 
@@ -26,6 +27,7 @@ export const s3SettingsProvider = {
   useFactory: (config: ConfigService): S3Settings => ({
     bucket: required(config, 'AWS_S3_BUCKET'),
     growdoBucket: required(config, 'GROWDO_AWS_S3_BUCKET'),
+    growdoCouponBucket: required(config, 'GROWDO_COUPON_S3_BUCKET'),
     region: config.get<string>('AWS_REGION') ?? 'ap-northeast-2',
   }),
 };
