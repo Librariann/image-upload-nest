@@ -22,11 +22,22 @@ export class UploadService {
   ) {}
 
   async uploadImage(file: Express.Multer.File): Promise<UploadResult> {
+    return this.uploadOriginalImage(file, this.settings.bucket);
+  }
+
+  async uploadGrowdoImage(file: Express.Multer.File): Promise<UploadResult> {
+    return this.uploadOriginalImage(file, this.settings.growdoBucket);
+  }
+
+  private async uploadOriginalImage(
+    file: Express.Multer.File,
+    bucket: string,
+  ): Promise<UploadResult> {
     const fileName = `${randomUUID()}_${file.originalname}`;
 
     try {
-      await this.putObject(fileName, file.buffer, file.mimetype);
-      return this.createResult(fileName);
+      await this.putObject(bucket, fileName, file.buffer, file.mimetype);
+      return this.createResult(bucket, fileName);
     } catch (error: unknown) {
       throw new HttpException(
         { error: `업로드 중 오류 발생: ${this.errorMessage(error)}` },
@@ -45,8 +56,13 @@ export class UploadService {
         .toBuffer();
       const fileName = `${randomUUID()}_profile.jpg`;
 
-      await this.putObject(fileName, resizedImage, 'image/jpeg');
-      return this.createResult(fileName);
+      await this.putObject(
+        this.settings.bucket,
+        fileName,
+        resizedImage,
+        'image/jpeg',
+      );
+      return this.createResult(this.settings.bucket, fileName);
     } catch (error: unknown) {
       throw new HttpException(
         {
@@ -58,13 +74,14 @@ export class UploadService {
   }
 
   private async putObject(
+    bucket: string,
     key: string,
     body: Buffer,
     contentType: string,
   ): Promise<void> {
     await this.s3Client.send(
       new PutObjectCommand({
-        Bucket: this.settings.bucket,
+        Bucket: bucket,
         Key: key,
         Body: body,
         ContentType: contentType,
@@ -72,11 +89,11 @@ export class UploadService {
     );
   }
 
-  private createResult(fileName: string): UploadResult {
+  private createResult(bucket: string, fileName: string): UploadResult {
     return {
       message: '파일 업로드 성공',
       fileName,
-      url: `https://${this.settings.bucket}.s3.${this.settings.region}.amazonaws.com/${fileName}`,
+      url: `https://${bucket}.s3.${this.settings.region}.amazonaws.com/${fileName}`,
     };
   }
 

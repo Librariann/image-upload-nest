@@ -18,6 +18,7 @@ npm run start:dev
 - `AWS_ACCESS_KEY`
 - `AWS_SECRET_KEY`
 - `AWS_S3_BUCKET`
+- `GROWDO_AWS_S3_BUCKET` (Growdo 버킷, 예: `growdo-images`)
 
 선택 환경변수:
 
@@ -27,6 +28,7 @@ npm run start:dev
 ## API
 
 - `POST /api/upload/image`: `file` multipart 필드의 원본을 업로드합니다.
+- `POST /api/upload/growdo/image`: `file` multipart 필드의 원본을 Growdo 버킷에 업로드합니다.
 - `POST /api/upload/image/profile`: 이미지를 최대 200×200 크기의 JPEG
   (품질 80)로 변환해 업로드합니다.
 

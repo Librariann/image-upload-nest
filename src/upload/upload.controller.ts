@@ -32,6 +32,16 @@ export class UploadController {
     return this.uploadService.uploadImage(file);
   }
 
+  @Post('growdo/image')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FileInterceptor('file', uploadOptions))
+  uploadGrowdoImage(
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ): Promise<UploadResult> {
+    this.ensureFile(file);
+    return this.uploadService.uploadGrowdoImage(file);
+  }
+
   @Post('image/profile')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file', uploadOptions))

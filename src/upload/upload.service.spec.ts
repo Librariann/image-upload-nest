@@ -7,7 +7,11 @@ describe('UploadService', () => {
   const send = jest.fn();
   const service = new UploadService(
     { send } as unknown as S3Client,
-    { bucket: 'test-bucket', region: 'ap-northeast-2' },
+    {
+      bucket: 'test-bucket',
+      growdoBucket: 'growdo-images',
+      region: 'ap-northeast-2',
+    },
   );
 
   beforeEach(() => {
@@ -32,6 +36,22 @@ describe('UploadService', () => {
       fileName: input.Key,
       url: `https://test-bucket.s3.ap-northeast-2.amazonaws.com/${input.Key}`,
     });
+  });
+
+  it('uploads a Growdo image to its separate bucket', async () => {
+    const result = await service.uploadGrowdoImage(
+      file(Buffer.from('growdo image'), 'sample.png', 'image/png'),
+    );
+    const input = send.mock.calls[0][0].input;
+
+    expect(input).toMatchObject({
+      Bucket: 'growdo-images',
+      Body: Buffer.from('growdo image'),
+      ContentType: 'image/png',
+    });
+    expect(result.url).toBe(
+      `https://growdo-images.s3.ap-northeast-2.amazonaws.com/${input.Key}`,
+    );
   });
 
   it('converts a profile image to a JPEG bounded by 200x200', async () => {
