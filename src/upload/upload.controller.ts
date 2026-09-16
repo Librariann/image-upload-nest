@@ -5,12 +5,10 @@ import {
   HttpStatus,
   Post,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadService } from './upload.service';
-import { GrowdoUploadGuard } from './growdo-upload.guard';
 import type { PrivateUploadResult, UploadResult } from './upload.types';
 
 const TEN_MEGABYTES = 10 * 1024 * 1024;
@@ -36,7 +34,6 @@ export class UploadController {
 
   @Post('growdo/image')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(GrowdoUploadGuard)
   @UseInterceptors(FileInterceptor('file', uploadOptions))
   uploadGrowdoImage(
     @UploadedFile() file: Express.Multer.File | undefined,
@@ -47,7 +44,6 @@ export class UploadController {
 
   @Post('growdo/coupon')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(GrowdoUploadGuard)
   @UseInterceptors(FileInterceptor('file', uploadOptions))
   uploadGrowdoCoupon(
     @UploadedFile() file: Express.Multer.File | undefined,

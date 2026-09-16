@@ -20,7 +20,6 @@ npm run start:dev
 - `AWS_S3_BUCKET`
 - `GROWDO_AWS_S3_BUCKET` (Growdo 버킷, 예: `growdo-images`)
 - `GROWDO_COUPON_S3_BUCKET` (비공개 쿠폰 버킷, 예: `growdo-coupons`)
-- `GROWDO_UPLOAD_API_KEY` (Growdo 백엔드 전용 업로드 키)
 
 선택 환경변수:
 
@@ -37,10 +36,8 @@ npm run start:dev
 
 파일 및 요청 최대 크기는 기존 서버와 동일하게 10MB입니다.
 
-Growdo의 두 업로드 API는 `x-growdo-upload-key` 헤더에
-`GROWDO_UPLOAD_API_KEY` 값을 요구합니다. 이 키는 Growdo 백엔드에만
-설정하고 프론트엔드에 전달하지 않습니다. 쿠폰 조회는 사용자와 쿠폰
-소유 관계를 확인할 수 있는 Growdo 백엔드에서 처리합니다.
+쿠폰 조회는 사용자와 쿠폰 소유 관계를 확인할 수 있는 Growdo
+백엔드에서 처리합니다.
 
 `growdo-images`의 이미지를 일반 S3 URL로 외부에 보여주려면 해당
 버킷에만 공개 `s3:GetObject` 정책을 적용해야 합니다. `growdo-coupons`는

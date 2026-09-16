@@ -15,7 +15,6 @@ describe('Upload API (e2e)', () => {
     process.env.AWS_S3_BUCKET = 'test-bucket';
     process.env.GROWDO_AWS_S3_BUCKET = 'growdo-images';
     process.env.GROWDO_COUPON_S3_BUCKET = 'growdo-coupons';
-    process.env.GROWDO_UPLOAD_API_KEY = 'test-growdo-backend-key';
     process.env.AWS_REGION = 'ap-northeast-2';
 
     const module = await Test.createTestingModule({
@@ -65,7 +64,6 @@ describe('Upload API (e2e)', () => {
 
     const response = await request(app.getHttpServer())
       .post('/api/upload/growdo/image')
-      .set('x-growdo-upload-key', 'test-growdo-backend-key')
       .attach('file', Buffer.from('growdo image'), {
         filename: 'sample.png',
         contentType: 'image/png',
@@ -79,26 +77,11 @@ describe('Upload API (e2e)', () => {
     );
   });
 
-  it('rejects Growdo uploads without the backend key before writing to S3', async () => {
-    send.mockClear();
-
-    await request(app.getHttpServer())
-      .post('/api/upload/growdo/image')
-      .attach('file', Buffer.from('image'), {
-        filename: 'sample.png',
-        contentType: 'image/png',
-      })
-      .expect(401);
-
-    expect(send).not.toHaveBeenCalled();
-  });
-
   it('POST /api/upload/growdo/coupon uses the private coupon bucket', async () => {
     send.mockClear();
 
     const response = await request(app.getHttpServer())
       .post('/api/upload/growdo/coupon')
-      .set('x-growdo-upload-key', 'test-growdo-backend-key')
       .attach('file', Buffer.from('coupon image'), {
         filename: 'coupon.png',
         contentType: 'image/png',
