@@ -4,4 +4,9 @@ export interface UploadResult {
   url: string;
 }
 
-export type PrivateUploadResult = Pick<UploadResult, 'message' | 'fileName'>;
+export type PrivateUploadResult = Pick<UploadResult, "message" | "fileName">;
+
+export interface PrivateFileResult {
+  body: Buffer;
+  contentType: string;
+}
